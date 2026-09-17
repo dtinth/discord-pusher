@@ -42,6 +42,22 @@ curl -N -H "Authorization: Bearer $EVENTS_TOKEN" http://localhost:8000/events
 curl -N "http://localhost:8000/events?token=$EVENTS_TOKEN"
 ```
 
+## Docker
+
+```sh
+docker build -t discord-sse .
+docker run --rm -p 8000:8000 \
+  -e DISCORD_TOKEN=... \
+  -e EVENTS_TOKEN=... \
+  -e DISCORD_INTENTS=Guilds,GuildMessages \
+  discord-sse
+```
+
+Images are also built and published to
+[`ghcr.io/dtinth/discord-sse`](https://github.com/dtinth/discord-sse/pkgs/container/discord-sse)
+by the `Docker` GitHub Actions workflow on every push to `main` (tag `latest`),
+on version tags (`v*`), and as a build-only smoke test on pull requests.
+
 ## Intents
 
 `DISCORD_INTENTS` is a comma-separated list of `GatewayIntentBits` names (see
