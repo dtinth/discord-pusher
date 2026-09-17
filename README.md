@@ -22,14 +22,24 @@ deno task start  # plain run
 
 - `GET /events` — SSE stream of all gateway dispatch events. Each message's
   `event:` field is the dispatch type (e.g. `MESSAGE_CREATE`) and `data:` is the
-  JSON-encoded `{ t, s, op, d }` gateway packet.
+  JSON-encoded `{ t, s, op, d }` gateway packet. Requires auth (see below).
 - `GET /events?type=MESSAGE_CREATE` — SSE stream filtered to one dispatch type.
-- `GET /health` — `{ ok: true, subscribers: <n> }`.
+- `GET /health` — `{ ok: true, subscribers: <n> }`. Not protected.
+
+## Auth
+
+`/events` requires the secret in `EVENTS_TOKEN` to be presented either as:
+
+- `Authorization: Bearer <token>` header, or
+- `?token=<token>` query parameter (for clients like browser `EventSource` that
+  can't set custom headers)
 
 Example client:
 
 ```sh
-curl -N http://localhost:8000/events
+curl -N -H "Authorization: Bearer $EVENTS_TOKEN" http://localhost:8000/events
+# or
+curl -N "http://localhost:8000/events?token=$EVENTS_TOKEN"
 ```
 
 ## Intents

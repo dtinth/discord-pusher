@@ -1,5 +1,17 @@
+import { timingSafeEqual } from 'node:crypto'
 import type { Broadcaster } from './broadcaster.ts'
 import type { GatewayEvent } from './bot.ts'
+
+function isAuthorized(req: Request, url: URL, token: string): boolean {
+  const header = req.headers.get('authorization')
+  const presented = header?.match(/^Bearer (.+)$/)?.[1] ??
+    url.searchParams.get('token')
+  if (!presented) return false
+
+  const a = new TextEncoder().encode(presented)
+  const b = new TextEncoder().encode(token)
+  return a.length === b.length && timingSafeEqual(a, b)
+}
 
 function sseResponse(
   events: Broadcaster<GatewayEvent>,
@@ -44,11 +56,17 @@ function sseResponse(
   })
 }
 
-export function createHandler(events: Broadcaster<GatewayEvent>) {
+export function createHandler(
+  events: Broadcaster<GatewayEvent>,
+  eventsToken: string,
+) {
   return (req: Request): Response => {
     const url = new URL(req.url)
 
     if (url.pathname === '/events') {
+      if (!isAuthorized(req, url, eventsToken)) {
+        return new Response('Unauthorized', { status: 401 })
+      }
       return sseResponse(events, url.searchParams.get('type'))
     }
 
