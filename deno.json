@@ -1,0 +1,14 @@
+{
+  "tasks": {
+    "dev": "deno run --watch --allow-net --allow-env --env-file main.ts",
+    "start": "deno run --allow-net --allow-env --env-file main.ts"
+  },
+  "imports": {
+    "discord.js": "npm:discord.js@^14.16.3"
+  },
+  "nodeModulesDir": "auto",
+  "fmt": {
+    "semiColons": false,
+    "singleQuote": true
+  }
+}
