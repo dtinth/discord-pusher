@@ -27,14 +27,14 @@ jobs:
           context: .
           push: false
           load: true
-          tags: discord-sse:test
+          tags: discord-pusher:test
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Smoke test image
         run: |
           set +e
-          output=$(docker run --rm discord-sse:test 2>&1)
+          output=$(docker run --rm discord-pusher:test 2>&1)
           status=$?
           echo "$output"
           set -e

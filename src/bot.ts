@@ -1,5 +1,5 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js'
-import { Broadcaster } from './broadcaster.ts'
+import type { Publisher } from './publisher.ts'
 
 export interface GatewayEvent {
   /** Dispatch event name, e.g. "MESSAGE_CREATE". Absent for non-dispatch opcodes. */
@@ -29,12 +29,15 @@ function parseIntents(raw: string | undefined): number[] {
   })
 }
 
-export function createBot(token: string, intentsEnv?: string) {
+export function createBot(
+  token: string,
+  publisher: Publisher,
+  intentsEnv?: string,
+) {
   const client = new Client({ intents: parseIntents(intentsEnv) })
-  const events = new Broadcaster<GatewayEvent>()
 
   client.on(Events.Raw, (packet: GatewayEvent) => {
-    events.publish(packet)
+    publisher.publish(packet)
   })
 
   client.once(Events.ClientReady, (c) => {
@@ -49,5 +52,9 @@ export function createBot(token: string, intentsEnv?: string) {
     await client.login(token)
   }
 
-  return { client, events, start }
+  function isReady() {
+    return client.isReady()
+  }
+
+  return { client, start, isReady }
 }

@@ -4,7 +4,7 @@
 
 ### Issue tracker
 
-Issues are tracked in GitHub Issues on `dtinth/discord-sse`. See `docs/agents/issue-tracker.md`.
+Issues are tracked in GitHub Issues on `dtinth/discord-pusher`. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
